@@ -1,8 +1,4 @@
 
-## Basic TK GUI with multiple page layers.
-
-```py
-
 # Import required modules
 from tkinter import *
 
@@ -157,5 +153,3 @@ env['label']['root']['para'].place(
 
 # Initiate application
 app.mainloop()
-
-```
