@@ -1,6 +1,8 @@
 
 # Import required modules
 from tkinter import *
+from tkcalendar import Calendar, DateEntry
+from datetime import date
 
 
 # Define cache
@@ -15,11 +17,11 @@ content = {
     },
     'account': {
         'title': 'Account',
-        'para': 'Welcome to your account section,\ninformation about you will be stored here.'
+        'para': 'Welcome to your account section,\ninformation about you will be stored here.\n\nAge: Unknown\nBirthday date: Unknown'
     },
     'store': {
         'title': 'Store',
-        'para': 'This is the store, soon there will be items ready for purschase.'
+        'para': 'This is the store, soon there will be items ready for purschase.\n( Not really though, this is just a template :D )'
     },
     'settings': {
         'title': 'Settings',
@@ -44,7 +46,7 @@ hook = {
 }
 
 
-# Set defaut page data
+# Set default page data
 hook['text']['title'].set(content['home']['title'])
 hook['text']['para'].set(content['home']['para'])
 
@@ -86,6 +88,58 @@ def goTo(page):
     hook['text']['title'].set(content[page]['title'])
     hook['text']['para'].set(content[page]['para'])
 
+    # Page specific env elements
+    if page == 'account':
+        env['button']['calendar'].place(
+            x=10,
+            y=165)
+    else: 
+        env['button']['calendar'].place_forget()
+
+
+# Calculate age from birthdate
+def getAge(bdayDate):
+    today = date.today()
+    return today.year - int(bdayDate.strftime('%Y')) - ((today.month, today.day) < (int(bdayDate.strftime('%m')), int(bdayDate.strftime('%d'))))
+
+
+# Append calendar
+def openCal():
+
+    # Summon new popup
+    top = Toplevel(app)
+
+    # Append calendar
+    cal = Calendar(top, 
+        font="Arial 14", 
+        selectmode='day', 
+        locale='en_US',
+        cursor="hand1",
+        year=2003, 
+        month=5, 
+        day=2)
+
+    # Visualize calendar
+    cal.pack(
+        fill="both", 
+        expand=True)
+
+    # Process calendar output
+    def print_sel(): 
+        content['account']['para'] = 'Welcome to your account section,\ninformation about you will be stored here.\n\nAge: {}\nBirthday date: {}'.format(getAge(cal.selection_get()), cal.selection_get())
+        goTo('account')
+        top.destroy()
+
+    # Submit calendar input
+    Button(top, 
+        text="Choose this date", 
+        width=60,
+        bg="#262625",
+        bd=0,
+        fg="#fff",
+        command=print_sel
+    ).pack()
+
 
 # Env buttons
 env['button'] = {
@@ -120,6 +174,14 @@ env['button'] = {
         bg='#3a3a39', 
         width=15,
         height=1,
+        bd=0),
+    'calendar': Button(env['frame']['root'], 
+        text="Change birthday date", 
+        command=openCal,
+        pady=5,
+        padx=52,
+        bg='#3a3a39',
+        fg='#fff',
         bd=0)
 }
 
